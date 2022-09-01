@@ -6,13 +6,11 @@
         <link href="{ assert('css/app.css') }}" rel="stylesheet">
     </head>
     <body>
-        <a href="/logout">logout</a>
-        <h1>Личный кабинет</h1>      
         <div id="app">
 
 </div>
 
-	
+
 
 	<script src="{{ asset('js/app.js') }}"></script>
     </body>

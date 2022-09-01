@@ -2,7 +2,7 @@
 <div class="product">
     <div>Name:{{product.name}}</div>
     <div>Description:{{product.description}}</div>
-    <div><button class="addToCartBtn" @click="$emit('addToCart', product)">addto cart</button></div>
+    <div><button class="addToCartBtn" @click="$emit('addToCart', product)">add to cart</button></div>
 </div>
 </template>
 

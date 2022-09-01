@@ -9,7 +9,7 @@ export const useCartStore = defineStore('cartStore', {
       getCart: (state) => state.cart,
     },
     actions: {
-      addToCart(_cart) {
+      updateCart(_cart) {
         this.cart = _cart;
       },
     },

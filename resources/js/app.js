@@ -7,13 +7,11 @@ import { createPinia } from 'pinia'
 import App from './components/App.vue'
 
 
-import About from './components/About.vue'
 import Products from './components/Products.vue'
 import Cart from './components/Cart.vue';
 
 const routes = [
     {path: '/', component: Products},
-    {path: '/about', component: About},
     {path: '/cart', component: Cart},
 ]
 
@@ -21,7 +19,7 @@ const pinia = createPinia()
 
 const router = VueRouter.createRouter({
     history: VueRouter.createWebHistory('/lk'),
-    routes 
+    routes
 })
 
 // export const store = new Vuex.Store({

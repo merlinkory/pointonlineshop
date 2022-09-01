@@ -1,13 +1,10 @@
 <template>
-<!-- Хочу тут вывести виджет корзины -->
+<div class="logout">
+    <router-link to="/logout">Выйти из системы</router-link>
+</div>
  <cart-widget></cart-widget>
- <br/>
-	<router-link to="/">Home</router-link> | 
-	<router-link to="/about">About</router-link>
-	<hr>	
-	<hr>
-	
-	<router-view></router-view>	
+	<router-link class="menu" to="/">Список товаров</router-link>
+	<router-view></router-view>
 </template>
 
 <script>
@@ -24,3 +21,10 @@ data(){
 }
 }
 </script>
+
+<style>
+.logout{
+    float: right;
+
+}
+</style>
