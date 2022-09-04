@@ -10,24 +10,43 @@
             </div>
         </div>
         <div class="client_data" v-if="Object.keys(cart).length !== 0">
-                <form class="client_data_form">
-                    <label for="name">ФИО:<br/>
-                    <input placeholder="ФИО" type="text" name="name" id="name">
-                    </label> <br/>
+                <form class="client_data_form" @submit.prevent>
+                    <fieldset>
+                        <legend>Информация о пользователе</legend>
 
-                    <label for="city">Город:<br/>
-                    <input placeholder="Город" type="text" name="city" id="city">
-                    </label> <br/>
+                        <label for="name">Фамилия:<br/>
+                            <input placeholder="Фамилия" type="text" v-model="lastName">
+                        </label> <br/>
+                        <span>{{formErrors['lastName']}}<br/></span>
+                        <label for="name">Имя:<br/>
+                            <input placeholder="Имя" type="text" v-model="firstName">
+                        </label> <br/>
+                        <span>{{formErrors['firstName']}}<br/></span>
+                        <label for="name">Отчество:<br/>
+                            <input placeholder="Отчество" type="text" v-model="middleName">
+                        </label> <br/>
+                        <span>{{formErrors['middleName']}}</span>
+                    </fieldset>
 
-                    <label for="address">Адрес:<br/>
-                    <textarea  name="address" id="address"></textarea>
-                    </label> <br/>
+                    <fieldset>
+                        <legend>Информация о адресе</legend>
 
-                    <label for="zip">Индекс:<br/>
-                    <input placeholder="Индекс" type="text" name="zip" id="zip">
-                    </label> <br/>
+                        <label for="city">Город:<br/>
+                            <input placeholder="Город" type="text" name="city" id="city" v-model="city">
+                        </label> <br/>
+                        <span>{{formErrors['city']}}<br/></span>
+                        <label for="address">Адрес:<br/>
+                            <textarea  name="address" id="address" v-model="address"></textarea>
+                        </label> <br/>
+                        <span>{{formErrors['address']}}<br/></span>
+                        <label for="zip">Индекс:<br/>
+                            <input placeholder="Индекс" type="text" name="zip" id="zip" v-model="zip">
+                        </label> <br/>
+                        <span>{{formErrors['zip']}}<br/></span>
 
-                    <button>Оформить заказ</button>
+                    </fieldset>
+
+                    <button @click="sendCart()">Оформить заказ</button>
                 </form>
         </div>
         <div v-else class="empty_cart">
@@ -40,31 +59,90 @@
 
 <script>
 import {useCartStore } from '../cartStore.js';
-import {computed} from 'vue';
+
 export default{
-  setup(){
-    const cartStore = useCartStore();
-
-    const deleteCartItem = (productId) => {
-        let cart =  cartStore.getCart;
-        delete cart[productId];
-        cartStore.updateCart(cart);
-    }
-
-    const updateCart = ()=> {
-        let cart = cartStore.getCart;
-
-        for(let k in cart){
-            cart[k]['count'] = parseInt(document.getElementById('product_'+k).value);
+    data(){
+        return{
+            firstName: '',
+            lastName: '',
+            middleName: '',
+            city: '',
+            address: '',
+            zip: '',
+            formErrors: [] // Массив с ошибками при заполнение формы
         }
-        cartStore.updateCart(cart);
+    },
+    methods: {
+        async sendCart(){
+
+            this.formErrors = [];
+            const cartStore = useCartStore();
+            let cart = cartStore.getCart;
+
+            const payload = {
+                cart: cart,
+                firstName: this.firstName,
+                lastName: this.lastName,
+                middleName: this.middleName,
+                city: this.city,
+                address: this.address,
+                zip: this.zip,
+            }
+
+            let response = {};
+
+            try {
+                response = await axios.post('/order', JSON.stringify(payload), {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+            }
+            catch (exeption){
+                response = exeption.response;
+            }
+
+            if(response.status === 200) {
+                alert('all right!!!');
+                this.firstName = this.lastName = this.middleName = this.city = this. address = this.zip = '';
+                cartStore.updateCart({});
+            }else if( response.status === 402) {
+                alert('Нехватает пойнов');
+            }else if(response.status === 422) {
+                for(let error in response.data.errors){
+                    this.formErrors[error] = 'заполните поле'
+                }
+                console.log(this.formErrors);
+            }
+            console.log(response);
+
+        },
+        deleteCartItem(productId){
+            const cartStore = useCartStore();
+            let cart =  cartStore.getCart;
+            delete cart[productId];
+            cartStore.updateCart(cart);
+        },
+        updateCart(){
+            const cartStore = useCartStore();
+
+            let cart = cartStore.getCart;
+
+            for(let k in cart){
+                cart[k]['count'] = parseInt(document.getElementById('product_'+k).value);
+            }
+            cartStore.updateCart(cart);
+        }
+    },
+    mounted(){
+        // this._error['general'] = 'general!!!'
+    },
+    computed:{
+        cart: function(){
+            const cartStore = useCartStore();
+            return cartStore.getCart;
+        }
     }
-    return {
-        cart: computed(()=>cartStore.getCart),
-        deleteCartItem,
-        updateCart,
-    }
-  }
 }
 </script>
 

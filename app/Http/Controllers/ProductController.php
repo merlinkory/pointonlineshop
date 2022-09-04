@@ -10,18 +10,19 @@ class ProductController  extends Controller{
 
     public function getProducts(){
         $products = Product::all()->toArray();
-        
+
         return response($products, 200)->header('Content-Type', 'application/json');
     }
-    
+
     public function newProduct(Request $request){
-                
+
         $product = Product::create([
             "name" => $request->name,
             "description" => $request->description,
             "price" => $request->price,
+            "quantity" => $request->quantity,
         ]);
-        
+
          return response($product, 200)->header('Content-Type', 'application/json');
     }
 }

@@ -3,7 +3,8 @@
     <router-link to="/logout">Выйти из системы</router-link>
 </div>
  <cart-widget></cart-widget>
-	<router-link class="menu" to="/">Список товаров</router-link>
+	<router-link class="menu" to="/">Список товаров</router-link> |
+    <router-link class="menu" to="/orders">Заказы</router-link>
 	<router-view></router-view>
 </template>
 
