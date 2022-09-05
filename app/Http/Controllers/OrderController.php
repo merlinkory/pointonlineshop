@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\User;
 use App\Models\OrderItem;
 use App\Models\UserPointTransaction;
+use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller {
@@ -26,12 +27,31 @@ class OrderController extends Controller {
         ]);
 
 
+        $products = []; //В нее складываем продукты которые есть у нас в корзине (выбранные из БД) и в будующем по тим данным обнавляем данные об остатке товаров в БД
+
+        //check amount of products
+        foreach ($request->cart as $productId=>$item){
+            $product = Product::find($productId);
+            if ($product->quantity < $item['count']){
+                $output = [
+                    'status'=> 'error',
+                    'message'=> "Кол-во {$product->name} не хватает для заказа, максимум {$product->quantity} ше.",
+                ];
+                return response($output, 200)->header('Content-Type', 'application/json');
+            }
+            $products[$productId] = $product;
+        }
+
         $cartTotalAmount = $this->getCartTotal($request->cart);
 
         //Cheking user point balance
         if ($cartTotalAmount > \Auth::user()->balance) {
 
-            return response('', 402);
+            $output = [
+                'status' => 'error',
+                'message' => 'нехватает point на балансе'
+            ];
+            return response($output, 200);
         }
 
         DB::beginTransaction();
@@ -63,13 +83,26 @@ class OrderController extends Controller {
             'comment' => "order: # {$order->id}"
         ]);
 
+        //Уменькаем кол-во продуктов
+        foreach ($request->cart as $productId => $item){
+
+            $product = $products[$productId];
+            $product->quantity -= $item['count'];
+            $product->save();
+        }
+
+        //Уменьщаем баланс пользователя
         $user = User::find(\Auth::user()->id);
         $user->balance -= $cartTotalAmount;
         $user->save();
 
         DB::commit();
 
-        return response($order, 200)->header('Content-Type', 'application/json');
+        $output = [
+            'status' => 'ok',
+             'order' => $order
+        ];
+        return response($output, 200)->header('Content-Type', 'application/json');
 
     }
 
@@ -93,6 +126,8 @@ class OrderController extends Controller {
         }
         return $amount;
     }
+
+
 
 
 }

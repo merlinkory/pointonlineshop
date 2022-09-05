@@ -103,11 +103,14 @@ export default{
             }
 
             if(response.status === 200) {
-                alert('all right!!!');
-                this.firstName = this.lastName = this.middleName = this.city = this. address = this.zip = '';
-                cartStore.updateCart({});
-            }else if( response.status === 402) {
-                alert('Нехватает пойнов');
+               let responseData = response.data;
+               if(responseData.status === 'error'){
+                   alert(responseData.message);
+               }else{
+                   alert("Заказ №"+responseData.order['id'] + " был успешно создан");
+                   this.firstName = this.lastName = this.middleName = this.city = this. address = this.zip = '';
+                   cartStore.updateCart({});
+               }
             }else if(response.status === 422) {
                 for(let error in response.data.errors){
                     this.formErrors[error] = 'заполните поле'

@@ -1,10 +1,13 @@
 <template>
         <div class="form-group">
-            <label>Название продукта:<br/><input type="text" v-model="productTitle" id="title" name="title" placeholder="Название продукта"/></label>
-            <label>Описание продукта<br/><textarea id="description" v-model="productDescription" name="description" placeholder="Описание продукта"></textarea></label>
-            <label>Цена:<br/><input type="text" v-model="productPrice" id="price" name="price" placeholder="Цена продукта"/></label>
-            <label>Кол-во:<br/><input type="text" v-model="productQuantity" id="quantity" name="quantity" placeholder="Кол-во"/></label>
-            <button @click="sendProductForm">Сохранить продукт</button>
+            <form @submit.prevent="spf">
+                <label>Название продукта:<br/><input type="text" v-model="productTitle" id="title" name="title" placeholder="Название продукта"/></label>
+                <label>Описание продукта<br/><textarea id="description" v-model="productDescription" name="description" placeholder="Описание продукта"></textarea></label>
+                <label>Цена:<br/><input type="text" v-model="productPrice" id="price" name="price" placeholder="Цена продукта"/></label>
+                <label>Кол-во:<br/><input type="text" v-model="productQuantity" id="quantity" name="quantity" placeholder="Кол-во"/></label>
+                <label>Изображение:<br/><input ref="image" type="file" @change="processFile"></label>
+                <button>Сохранить продукт</button>
+            </form>
        </div>
        <div class="product-list">
         <h1>Products:</h1>
@@ -13,6 +16,7 @@
                 <div class="product-description">Description: {{product.description}}</div>
                 <div class="product-price">Price: {{product.price}}</div>
                 <div class="product-quantity">Qty: {{product.quantity}}</div>
+                <img v-for="image in product.images" :key="image.id" v-bind:src="'/storage/images/' + image.image_path">
             </div>
        </div>
 </template>
@@ -26,9 +30,26 @@ export default {
             productDescription:'',
             productPrice:0,
             productQuantity:0,
+            productImage: null,
         }
     },
     methods:{
+        processFile(event) {
+            this.productImage = event.target.files[0];
+            console.log(this.productImage); // В консоли картинка распознаётся со всеми параметрами как надо
+        },
+        async spf(){
+            let form = new FormData();
+            form.append('name', this.productTitle);
+            form.append('description', this.productDescription);
+            form.append('price', this.productPrice);
+            form.append('quantity', this.productQuantity);
+            form.append('image', this.productImage);
+
+            console.log(form);
+
+            const response = await axios.post('/admin/api/products', form);
+        },
         async sendProductForm(){
 
             if(this.productTitle === '' || this.productDescription === ''|| this.productPrice === ''){
@@ -60,6 +81,7 @@ export default {
         async getProducts(){
              const response = await axios.get('/products');
              this.products = response.data;
+             console.log(response.data);
         }
     },
     mounted(){
