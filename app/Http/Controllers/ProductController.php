@@ -17,6 +17,7 @@ class ProductController  extends Controller{
 
     public function newProduct(Request $request){
 
+        //TODO: add checking and validation
         $image_path = $request->image->store('public/images');
         $image_path = str_replace("public/images/",'',$image_path);
 
