@@ -49,10 +49,42 @@ class ProductController  extends Controller{
 
         $productImage = ProductImage::create([
             'product_id' => $product->id,
-            'image_path' => $image_path,
+            'image_path' => $image_path,  //TODO: change image_path to image
         ]);
 
 
          return response($product, 200)->header('Content-Type', 'application/json');
+    }
+
+    public function deleteImage(Request $request){
+
+        $productImage = ProductImage::find($request->id);
+        $productImage->delete();
+
+        //TODO: checking answer may be error
+        $output = [
+            'status'=> 'ok',
+        ];
+
+         return response($output, 200)->header('Content-Type', 'application/json');
+    }
+
+    public function saveImage(Request $request){
+        
+        //TODO: add validation
+        $image_path = $request->image->store('public/images');
+        $image_path = str_replace("public/images/",'',$image_path);
+
+        $productImage = ProductImage::create([
+            'product_id' => $request->product_id,
+            'image_path' => $image_path, //TODO: change image_path to image
+        ]);
+
+        //TODO: checking answer may be error
+        $output = [
+            'status' => 'ok',
+        ];
+
+        return response($output, 200)->header('Content-Type', 'application/json');
     }
 }

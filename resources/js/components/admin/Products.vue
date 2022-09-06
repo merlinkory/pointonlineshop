@@ -16,10 +16,18 @@
                     <label>Название: <input v-bind:id="'product_name_' + product.id" type="text" v-bind:value="product.name" /></label><br/>
                     <label>Описание: <input v-bind:id="'product_description_' + product.id" type="text" v-bind:value="product.description" /></label><br/>
                     <label>Цена: <input v-bind:id="'product_price_' + product.id" type="text" v-bind:value="product.price" /></label><br/>
-                    <label>Кол-во: <input v-bind:id="'product_quantity_' + product.id" type="text" v-bind:value="product.quantity" /></label><br/>                                      
-                    <img class="product_image" v-for="image in product.images" :key="image.id" v-bind:src="'/storage/images/' + image.image_path" /> <br/> 
+                    <label>Кол-во: <input v-bind:id="'product_quantity_' + product.id" type="text" v-bind:value="product.quantity" /></label><br/>     
+                    <div v-for="image in product.images" :key="image.id" v-bind:id="'image_' + image.id">
+                        <img class="product_image"  v-bind:src="'/storage/images/' + image.image_path" />
+                        <a href="#"  @click.prevent="deleteImage(image.id)">X</a> <br/>
+                    </div>                                                       
                     <button>Изменить продукт</button>              
-                </form>                                                                           
+                </form>   
+                    <br/>                                 
+                <form @submit.prevent="addNewImage(product.id)">
+                    <label>Изображение:<br/><input ref="image" v-bind:id="'image_product_id_'+ product.id" type="file" @change="processFile"></label>
+                    <button>Добавить изображение</button>
+                </form>                                       
             </div>
        </div>
 </template>
@@ -37,6 +45,22 @@ export default {
         }
     },
     methods:{
+        async addNewImage(product_id){
+            let form = new FormData();
+
+            form.append('product_id', product_id);
+            form.append('image',this.productImage);
+            
+            const response = await axios.post('/admin/api/product/image', form);
+        },
+        async deleteImage(id){
+
+            const response = await axios.delete('/admin/api/product/image/'+id);
+
+            if(response.data.status === 'ok'){
+                document.getElementById('image_' + id).remove();
+            }
+        },
         async editProduct(product_id){
             
             let payload = {
@@ -62,8 +86,7 @@ export default {
         
         },
         processFile(event) {
-            this.productImage = event.target.files[0];
-            console.log(this.productImage); // В консоли картинка распознаётся со всеми параметрами как надо
+            this.productImage = event.target.files[0];            
         },
         async sendProductForm(){
             let form = new FormData();
