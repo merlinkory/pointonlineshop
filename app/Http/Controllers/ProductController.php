@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class ProductController  extends Controller{
 
     public function getProducts(){
-        $products = Product::where('id','>',0)->with('images')->get(); // TODO: change where() to All()
+        $products = Product::with('images')->get();
 
         return response($products, 200)->header('Content-Type', 'application/json');
     }
