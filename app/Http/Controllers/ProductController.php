@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class ProductController  extends Controller{
 
-    public function getProducts(){
+    public function get(){
         $products = Product::with('images')->get();
 
         return response($products, 200)->header('Content-Type', 'application/json');

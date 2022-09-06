@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 class OrderController extends Controller {
 
 
-    public function saveOrder(Request $request): \Illuminate\Http\Response{
+    public function save(Request $request): \Illuminate\Http\Response{
 
         //validation
         $validated = $request->validate([
@@ -109,7 +109,7 @@ class OrderController extends Controller {
     /**
      * @return \Illuminate\Http\Response
      */
-    public function getOrders(): \Illuminate\Http\Response{
+    public function get(): \Illuminate\Http\Response{
         $orders = Order::where('user_id',\Auth::user()->id)->with('OrderItems')->get();
         return response($orders, 200)->header('Content-Type', 'application/json');
     }

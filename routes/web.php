@@ -24,9 +24,9 @@ Route::get('/', function () {
 });
 
 //for Cleent Area
-Route::get('/products', [App\Http\Controllers\ProductController::class, 'getProducts'])->middleware('auth');
-Route::post('/order',[\App\Http\Controllers\OrderController::class,'saveOrder'])->middleware('auth');
-Route::get('/order',[\App\Http\Controllers\OrderController::class,'getOrders'])->middleware('auth');
+Route::get('/products', [App\Http\Controllers\ProductController::class, 'get'])->middleware('auth');
+Route::post('/order',[\App\Http\Controllers\OrderController::class,'save'])->middleware('auth');
+Route::get('/order',[\App\Http\Controllers\OrderController::class,'get'])->middleware('auth');
 
 Route::group(['middleware' => 'admin_auth'], function () {
     Route::view('/admin', 'admin');
