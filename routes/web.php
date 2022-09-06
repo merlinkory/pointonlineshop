@@ -34,7 +34,8 @@ Route::group(['middleware' => 'admin_auth'], function () {
 
     Route::get('admin/api/users',[App\Http\Controllers\UserController::class,'getUsers']);
     Route::post('admin/api/users/create_user_point_transaction',[App\Http\Controllers\UserController::class,'makeUserPointTransaction']);
-    Route::post('admin/api/products', [App\Http\Controllers\ProductController::class, 'newProduct']);
+    Route::post('admin/api/product', [App\Http\Controllers\ProductController::class, 'save']);
+    Route::put('admin/api/product', [App\Http\Controllers\ProductController::class, 'update']);
 
 });
 

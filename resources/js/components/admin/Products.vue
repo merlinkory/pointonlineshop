@@ -1,6 +1,6 @@
 <template>
         <div class="form-group">
-            <form @submit.prevent="spf">
+            <form @submit.prevent="sendProductForm">
                 <label>Название продукта:<br/><input type="text" v-model="productTitle" id="title" name="title" placeholder="Название продукта"/></label>
                 <label>Описание продукта<br/><textarea id="description" v-model="productDescription" name="description" placeholder="Описание продукта"></textarea></label>
                 <label>Цена:<br/><input type="text" v-model="productPrice" id="price" name="price" placeholder="Цена продукта"/></label>
@@ -12,11 +12,14 @@
        <div class="product-list">
         <h1>Products:</h1>
             <div class="product-item" v-for="product in products" :key="product.id">
-                <div class="product-name">Title:{{product.name}}</div>
-                <div class="product-description">Description: {{product.description}}</div>
-                <div class="product-price">Price: {{product.price}}</div>
-                <div class="product-quantity">Qty: {{product.quantity}}</div>
-                <img v-for="image in product.images" :key="image.id" v-bind:src="'/storage/images/' + image.image_path">
+                <form @submit.prevent="editProduct(product.id)">
+                    <label>Название: <input v-bind:id="'product_name_' + product.id" type="text" v-bind:value="product.name" /></label><br/>
+                    <label>Описание: <input v-bind:id="'product_description_' + product.id" type="text" v-bind:value="product.description" /></label><br/>
+                    <label>Цена: <input v-bind:id="'product_price_' + product.id" type="text" v-bind:value="product.price" /></label><br/>
+                    <label>Кол-во: <input v-bind:id="'product_quantity_' + product.id" type="text" v-bind:value="product.quantity" /></label><br/>                                      
+                    <img class="product_image" v-for="image in product.images" :key="image.id" v-bind:src="'/storage/images/' + image.image_path" /> <br/> 
+                    <button>Изменить продукт</button>              
+                </form>                                                                           
             </div>
        </div>
 </template>
@@ -34,11 +37,35 @@ export default {
         }
     },
     methods:{
+        async editProduct(product_id){
+            
+            let payload = {
+                id: product_id,
+                name: document.getElementById('product_name_'+product_id).value,
+                description: document.getElementById('product_description_'+product_id).value,
+                price: document.getElementById('product_price_'+product_id).value,
+                quantity: document.getElementById('product_quantity_'+product_id).value
+            };
+            
+
+            const response = await axios.put('/admin/api/product', JSON.stringify(payload),{
+                headers: {
+                     'Content-Type': 'application/json'
+                }
+            });
+
+            if(response.data.status === 'ok'){
+                alert('Успешно отредактировано!')
+            }else{
+                alert('Ошибка во время редактирования!')
+            }
+        
+        },
         processFile(event) {
             this.productImage = event.target.files[0];
             console.log(this.productImage); // В консоли картинка распознаётся со всеми параметрами как надо
         },
-        async spf(){
+        async sendProductForm(){
             let form = new FormData();
             form.append('name', this.productTitle);
             form.append('description', this.productDescription);
@@ -48,26 +75,7 @@ export default {
 
             console.log(form);
 
-            const response = await axios.post('/admin/api/products', form);
-        },
-        async sendProductForm(){
-
-            if(this.productTitle === '' || this.productDescription === ''|| this.productPrice === ''){
-                alert('Заполните все поля продукта');
-                return;
-            }
-            const payload = {
-                "name" : this.productTitle,
-                "description" : this.productDescription,
-                "price" : this.productPrice,
-                "quantity" : this.productQuantity
-            };
-
-            const response = await axios.post('/admin/api/products', JSON.stringify(payload), {
-                headers: {
-                     'Content-Type': 'application/json'
-                }
-            });
+            const response = await axios.post('/admin/api/product', form);
 
             this.productTitle = ''
             this.productDescription = '';
@@ -94,8 +102,8 @@ export default {
 .form-group {
    margin-bottom: 20px;
    padding: 10px;
-   background: #291810;
-   width:200px;
+   background: #7ba4e5;
+   width:250px;
       float: left;
 }
 .form{
@@ -124,6 +132,8 @@ export default {
 .product-item{
     border: 1px solid;
     padding-left: 10px;
+}
+.product_image{
     width: 200px;
 }
 </style>

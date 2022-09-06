@@ -1,7 +1,9 @@
 <template>
 <div class="product">
-    <div>Name:{{product.name}}</div>
-    <div>Description:{{product.description}}</div>
+    <div><strong>Name: </strong>{{product.name}}</div>
+    <div><strong>Price: </strong>{{product.price}}</div>
+    <div><strong>Description: </strong>{{product.description}}</div>
+    <div><img class="product_image" v-for="image in product.images" :key="image.id" v-bind:src="'/storage/images/' + image.image_path"></div>
     <div><button class="addToCartBtn" @click="$emit('addToCart', product)">add to cart</button></div>
 </div>
 </template>
@@ -23,13 +25,17 @@ export default {
 <style>
 .product{
     border: 1px solid #ccc;
-    width: 200px;
-    margin-top: 5px;
+    width: 250px;
+    margin-top: 10px;
+    padding-left: 10px;
 }
 .addToCartBtn{
-       padding: 10px 15px;
+    padding: 10px 15px;
     background: none;
     color: teal;
     border: 1px solid teal;
+}
+.product_image{
+     width: 200px;
 }
 </style>

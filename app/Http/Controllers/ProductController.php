@@ -15,7 +15,26 @@ class ProductController  extends Controller{
         return response($products, 200)->header('Content-Type', 'application/json');
     }
 
-    public function newProduct(Request $request){
+    public function update(Request $request){
+       
+        $product = Product::find($request->id);
+
+        $product->name =  $request->name;
+        $product->description =  $request->description;
+        $product->price =  $request->price;
+        $product->quantity =  $request->quantity;
+        $product->save();
+
+        $output = [
+            'status'=> 'ok',
+            'product'=> $product,
+        ];
+
+        return response($output, 200)->header('Content-Type', 'application/json');
+
+        
+    }
+    public function save(Request $request){
 
         //TODO: add checking and validation
         $image_path = $request->image->store('public/images');
