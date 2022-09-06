@@ -83,6 +83,7 @@ class ProductController  extends Controller{
         //TODO: checking answer may be error
         $output = [
             'status' => 'ok',
+            'image' => $productImage
         ];
 
         return response($output, 200)->header('Content-Type', 'application/json');

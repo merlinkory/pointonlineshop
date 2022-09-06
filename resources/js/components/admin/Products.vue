@@ -17,10 +17,12 @@
                     <label>Описание: <input v-bind:id="'product_description_' + product.id" type="text" v-bind:value="product.description" /></label><br/>
                     <label>Цена: <input v-bind:id="'product_price_' + product.id" type="text" v-bind:value="product.price" /></label><br/>
                     <label>Кол-во: <input v-bind:id="'product_quantity_' + product.id" type="text" v-bind:value="product.quantity" /></label><br/>     
-                    <div v-for="image in product.images" :key="image.id" v-bind:id="'image_' + image.id">
-                        <img class="product_image"  v-bind:src="'/storage/images/' + image.image_path" />
-                        <a href="#"  @click.prevent="deleteImage(image.id)">X</a> <br/>
-                    </div>                                                       
+                    <div id="image_container">
+                        <div v-for="image in product.images" :key="image.id" v-bind:id="'image_' + image.id">
+                            <img class="product_image"  v-bind:src="'/storage/images/' + image.image_path" />
+                            <a href="#"  @click.prevent="deleteImage(product.id, image.id)">X</a> <br/>
+                        </div>                                                       
+                    </div>
                     <button>Изменить продукт</button>              
                 </form>   
                     <br/>                                 
@@ -52,13 +54,39 @@ export default {
             form.append('image',this.productImage);
             
             const response = await axios.post('/admin/api/product/image', form);
-        },
-        async deleteImage(id){
 
-            const response = await axios.delete('/admin/api/product/image/'+id);
+            if(response.data.status === 'ok'){                
+         
+                let product  = this.getProductById(product_id);
+                console.log(product);
+                product.images.push(response.data.image);
+
+                this.productImage = null;
+            }else{
+                alert('Проблема с добавлением картинки');
+            }
+        },
+        getProductById(product_id){
+            for(let product of this.products){
+                    if(product.id === product_id){
+                        return product;
+                    }
+                }
+        },
+        async deleteImage(product_id, image_id){
+
+            const response = await axios.delete('/admin/api/product/image/'+image_id);
 
             if(response.data.status === 'ok'){
-                document.getElementById('image_' + id).remove();
+
+                let product = this.getProductById(product_id);
+                for(let key in product.images){
+                    console.log(product.images[key].id, image_id);
+                    if(product.images[key].id === image_id){
+                        product.images.splice(key,1);
+                    }
+                }
+                //document.getElementById('image_' + id).remove(); //TODO: подумать может оставить это решение, оно быстрее...
             }
         },
         async editProduct(product_id){
