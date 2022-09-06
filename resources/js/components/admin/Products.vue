@@ -75,6 +75,7 @@ export default {
         },
         async deleteImage(product_id, image_id){
 
+            if(!confirm('вуверены в удаление ?')) return true;
             const response = await axios.delete('/admin/api/product/image/'+image_id);
 
             if(response.data.status === 'ok'){
@@ -174,11 +175,12 @@ export default {
    border-width: 0;
 }
 .product-list{
-    float: right;
+    float: left;
     width: 50%;
     background-color: #ccc;
     vertical-align: text-top;
     padding: 20px;
+    margin-left: 10px;
 }
 .product-item{
     border: 1px solid;

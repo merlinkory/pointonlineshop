@@ -78,6 +78,7 @@ class OrderController extends Controller {
 
         UserPointTransaction::create([
             'user_id' => \Auth::user()->id,
+            'owner_id' => \Auth::user()->id,
             'point_value'=> $cartTotalAmount,
             'type'=> 'withdraw',
             'comment' => "order: # {$order->id}"

@@ -10,6 +10,6 @@ class UserPointTransaction extends Model
     use HasFactory;
     
     protected $fillable = [
-        'user_id', 'point_value', 'type','comment'
+        'user_id', 'owner_id', 'point_value', 'type','comment'
     ];
 }

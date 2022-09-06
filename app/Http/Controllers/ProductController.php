@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Storage;
 
 class ProductController  extends Controller{
 
@@ -59,8 +59,11 @@ class ProductController  extends Controller{
     public function deleteImage(Request $request){
 
         $productImage = ProductImage::find($request->id);
-        $productImage->delete();
 
+        Storage::delete('public/images/'. $productImage->image_path);
+        
+        $productImage->delete();
+    
         //TODO: checking answer may be error
         $output = [
             'status'=> 'ok',

@@ -15,6 +15,7 @@ class UserController  extends Controller{
         
         $user_point_transaction = UserPointTransaction::create([
             'user_id' => $request->user_id,
+            'owner_id' => \Auth::user()->id,
             'point_value' => $request->user_point,
             'type' => 'deposit',
             'comment' => 'test'
