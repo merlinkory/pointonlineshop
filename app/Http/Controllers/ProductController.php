@@ -16,7 +16,7 @@ class ProductController  extends Controller{
     }
 
     public function update(Request $request){
-       
+
         $product = Product::find($request->id);
 
         $product->name =  $request->name;
@@ -32,7 +32,7 @@ class ProductController  extends Controller{
 
         return response($output, 200)->header('Content-Type', 'application/json');
 
-        
+
     }
     public function save(Request $request){
 
@@ -56,14 +56,40 @@ class ProductController  extends Controller{
          return response($product, 200)->header('Content-Type', 'application/json');
     }
 
+    public function delete(Request $request){
+
+        $product = Product::find($request->id);
+
+
+
+        $status = 'ok';
+        try{
+
+            //delete product images
+            foreach ($product->images as $image){
+                Storage::delete('public/images/'. $image->image_path);
+            }
+
+           $product->delete();
+
+        }catch (\Exception $ex){
+           $status = 'error';
+        }
+
+        $output = [
+            'status' => $status
+        ];
+
+        return response($output, 200)->header('Content-Type', 'application/json');
+    }
     public function deleteImage(Request $request){
 
         $productImage = ProductImage::find($request->id);
 
         Storage::delete('public/images/'. $productImage->image_path);
-        
+
         $productImage->delete();
-    
+
         //TODO: checking answer may be error
         $output = [
             'status'=> 'ok',
@@ -73,7 +99,7 @@ class ProductController  extends Controller{
     }
 
     public function saveImage(Request $request){
-        
+
         //TODO: add validation
         $image_path = $request->image->store('public/images');
         $image_path = str_replace("public/images/",'',$image_path);

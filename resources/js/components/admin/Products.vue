@@ -16,20 +16,21 @@
                     <label>Название: <input v-bind:id="'product_name_' + product.id" type="text" v-bind:value="product.name" /></label><br/>
                     <label>Описание: <input v-bind:id="'product_description_' + product.id" type="text" v-bind:value="product.description" /></label><br/>
                     <label>Цена: <input v-bind:id="'product_price_' + product.id" type="text" v-bind:value="product.price" /></label><br/>
-                    <label>Кол-во: <input v-bind:id="'product_quantity_' + product.id" type="text" v-bind:value="product.quantity" /></label><br/>     
+                    <label>Кол-во: <input v-bind:id="'product_quantity_' + product.id" type="text" v-bind:value="product.quantity" /></label><br/>
                     <div id="image_container">
                         <div v-for="image in product.images" :key="image.id" v-bind:id="'image_' + image.id">
                             <img class="product_image"  v-bind:src="'/storage/images/' + image.image_path" />
                             <a href="#"  @click.prevent="deleteImage(product.id, image.id)">X</a> <br/>
-                        </div>                                                       
+                        </div>
                     </div>
-                    <button>Изменить продукт</button>              
-                </form>   
-                    <br/>                                 
+                    <button>Изменить продукт</button>
+                </form>
+                    <br/>
                 <form @submit.prevent="addNewImage(product.id)">
                     <label>Изображение:<br/><input ref="image" v-bind:id="'image_product_id_'+ product.id" type="file" @change="processFile"></label>
                     <button>Добавить изображение</button>
-                </form>                                       
+                </form> <br/>
+                <button @click="deleteProduct(product.id)">Удалить</button>
             </div>
        </div>
 </template>
@@ -47,16 +48,32 @@ export default {
         }
     },
     methods:{
+        async deleteProduct(product_id){
+
+            if(!confirm('вуверены в удаление ?')) return true;
+
+            const response = await axios.delete('/admin/api/product/'+ product_id);
+
+            if(response.data.status === 'ok'){
+                for(let key in this.products){
+                    if(this.products[key].id === product_id){
+                        this.products.splice(key,1);
+                    }
+                }
+            }else{
+                alert('Проблема с удалением');
+            }
+        },
         async addNewImage(product_id){
             let form = new FormData();
 
             form.append('product_id', product_id);
             form.append('image',this.productImage);
-            
+
             const response = await axios.post('/admin/api/product/image', form);
 
-            if(response.data.status === 'ok'){                
-         
+            if(response.data.status === 'ok'){
+
                 let product  = this.getProductById(product_id);
                 console.log(product);
                 product.images.push(response.data.image);
@@ -91,7 +108,7 @@ export default {
             }
         },
         async editProduct(product_id){
-            
+
             let payload = {
                 id: product_id,
                 name: document.getElementById('product_name_'+product_id).value,
@@ -99,7 +116,7 @@ export default {
                 price: document.getElementById('product_price_'+product_id).value,
                 quantity: document.getElementById('product_quantity_'+product_id).value
             };
-            
+
 
             const response = await axios.put('/admin/api/product', JSON.stringify(payload),{
                 headers: {
@@ -112,10 +129,10 @@ export default {
             }else{
                 alert('Ошибка во время редактирования!')
             }
-        
+
         },
         processFile(event) {
-            this.productImage = event.target.files[0];            
+            this.productImage = event.target.files[0];
         },
         async sendProductForm(){
             let form = new FormData();

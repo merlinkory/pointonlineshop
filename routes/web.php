@@ -36,6 +36,7 @@ Route::group(['middleware' => 'admin_auth'], function () {
     Route::post('admin/api/users/create_user_point_transaction',[App\Http\Controllers\UserController::class,'makeUserPointTransaction']);
     Route::post('admin/api/product', [App\Http\Controllers\ProductController::class, 'save']);
     Route::put('admin/api/product', [App\Http\Controllers\ProductController::class, 'update']);
+    Route::delete('admin/api/product/{id}', [App\Http\Controllers\ProductController::class, 'delete']);
     Route::delete('admin/api/product/image/{id}', [App\Http\Controllers\ProductController::class, 'deleteImage']);
     Route::post('admin/api/product/image', [App\Http\Controllers\ProductController::class, 'saveImage']);
 
