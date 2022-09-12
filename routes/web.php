@@ -43,6 +43,7 @@ Route::group(['middleware' => 'admin_auth'], function () {
     Route::post('admin/api/product/image', [App\Http\Controllers\ProductController::class, 'saveImage']);
 
     Route::post('admin/api/orders/list',[\App\Http\Controllers\OrderController::class,'list']);
+    Route::put('admin/api/orders/{id}/update',[\App\Http\Controllers\OrderController::class,'update']);
 
 });
 

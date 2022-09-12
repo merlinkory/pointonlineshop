@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use http\Client\Response;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\User;
@@ -123,6 +122,19 @@ class OrderController extends Controller {
     public function list(Request $request): \Illuminate\Http\Response{
         $orders = Order::with('OrderItems')->paginate(2);
         return response($orders, 200)->header('Content-Type', 'application/json');
+    }
+
+    public function update(Request $request){
+        //TODO; validation
+        $order = Order::find($request->id);
+        $order->status = $request->status;
+        $order->save();
+
+        $output = [
+            'status'=> 'ok'
+        ];
+
+        return response($output, 200)->header('Content-Type', 'application/json');
     }
 
     /**

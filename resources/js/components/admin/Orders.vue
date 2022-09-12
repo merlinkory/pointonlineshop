@@ -6,9 +6,40 @@
         :fields="fields"
         :items="orders"
         :current-page="currentPage"
-
     >
+        <template #cell(id)="row">
+            {{ row.value }}
+        </template>
+
+        <template #cell(last_name)="row">
+            {{ row.value }}
+        </template>
+
+        <template #cell(order_total)="row">
+            {{ row.value }}
+        </template>
+
+        <template #cell(edit)="row">
+            <b-link href="#" @click="showOrder(row.item)">
+                show
+            </b-link>
+        </template>
     </b-table>
+
+    <b-modal size="lg" v-model="orderDetailShow" hide-footer id="order_info" title="заказ">
+        <div class="my-4">
+           <p>Заказ № {{ orderId }} На суммму {{ orderTotal }}</p>
+            <p>Статус заказа:</p>
+            <p><b-form-select v-model="orderStatus" :options="orderOptions"></b-form-select></p>
+            <p>Продукты в заказе:</p>
+            <b-table
+                striped
+                hover
+                :items="orderItems">
+            </b-table>
+        </div>
+        <b-button id="saveOrderBtn" class="mt-3" block @click="saveOrder()">Сохранить изменения</b-button>
+    </b-modal>
 </template>
 
 <script>
@@ -20,19 +51,64 @@ export default {
             fields: [
                 {key: 'id'},
                 {key: 'last_name', label: 'Фамилия'},
-                {key: 'first_name', label: 'Имя'},
-                {key: 'middle_name', label: 'Отчество'},
-                {key: 'order_total', label: 'Сумма заказа (points)'}
+                {key: 'order_total', label: 'Сумма заказа (points)'},
+                {key: 'edit', label: ''}
             ],
+
             currentPage: 1,
             perPage: 1,
             totalRows: 1,
 
+            orderDetailShow: false,
+
+            orderOptions:[
+                {value: 'new', text:'new'},
+                {value: 'pending', text:'pending'},
+                {value: 'canceled', text:'canceled'},
+                {value: 'completed', text:'completed'},
+            ],
+
+            //order detail data
+            orderId: 0,
+            orderTotal: 0,
+            orderStatus: '',
+            orderItems: [],
         }
     },
     methods: {
+       async saveOrder(){
+
+           document.getElementById('saveOrderBtn').setAttribute('disabled','disabled');
+
+           const payload = {
+               status: this.orderStatus
+           }
+           const response = await axios.put('/admin/api/orders/'+this.orderId+'/update',payload);
+           if(response.data.status === 'ok'){
+               //измениене статуса заказа в локально массиве заказов
+               for(let order of this.orders){
+                   if(order.id === this.orderId){
+                       order.status = this.orderStatus;
+                   }
+               }
+               alert('Заказ успешно изменен');
+           }else{
+               alert('Ошибка при изменение заказа');
+           }
+           this.orderDetailShow = false;
+        },
+        showOrder(item){
+            this.orderDetailShow = true;
+            // document.getElementById('saveOrderBtn').setAttribute('visible','true');
+            // console.log(this.orderDetailShow);
+            this.orderId = item.id;
+            this.orderTotal = item.order_total;
+            this.orderStatus = item.status;
+            this.orderItems = item.order_items;
+            console.log(item);
+        },
         async getOrders(){
-            let response = await axios.post('/admin/api/orders/list',{
+            const response = await axios.post('/admin/api/orders/list',{
                 page: this.currentPage,
 
             });
