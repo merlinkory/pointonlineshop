@@ -14,7 +14,17 @@ class Order extends Model
        'user_id', 'first_name','last_name','middle_name','city','address','zip'
     ];
 
+    protected $appends = ['order_total'];
+
     public function orderItems(){
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function getOrderTotalAttribute(): float{
+
+        return $this->orderItems->sum(function($item){
+            return $item['quantity'] * $item['price'];
+        });
+
     }
 }

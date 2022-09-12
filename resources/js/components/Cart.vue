@@ -92,7 +92,7 @@ export default{
             let response = {};
 
             try {
-                response = await axios.post('/order', JSON.stringify(payload), {
+                response = await axios.post('/orders', JSON.stringify(payload), {
                     headers: {
                         'Content-Type': 'application/json'
                     }

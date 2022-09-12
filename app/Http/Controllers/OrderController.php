@@ -108,10 +108,20 @@ class OrderController extends Controller {
     }
 
     /**
+     * @title Get orders for auth user
      * @return \Illuminate\Http\Response
      */
-    public function get(): \Illuminate\Http\Response{
+    public function getUserOrders(): \Illuminate\Http\Response{
         $orders = Order::where('user_id',\Auth::user()->id)->with('OrderItems')->get();
+        return response($orders, 200)->header('Content-Type', 'application/json');
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function list(Request $request): \Illuminate\Http\Response{
+        $orders = Order::with('OrderItems')->paginate(2);
         return response($orders, 200)->header('Content-Type', 'application/json');
     }
 

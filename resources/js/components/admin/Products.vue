@@ -52,7 +52,7 @@ export default {
 
             if(!confirm('вуверены в удаление ?')) return true;
 
-            const response = await axios.delete('/admin/api/product/'+ product_id);
+            const response = await axios.delete('/admin/api/products/'+ product_id);
 
             if(response.data.status === 'ok'){
                 for(let key in this.products){
@@ -70,7 +70,7 @@ export default {
             form.append('product_id', product_id);
             form.append('image',this.productImage);
 
-            const response = await axios.post('/admin/api/product/image', form);
+            const response = await axios.post('/admin/api/products/image', form);
 
             if(response.data.status === 'ok'){
 
@@ -93,7 +93,7 @@ export default {
         async deleteImage(product_id, image_id){
 
             if(!confirm('вуверены в удаление ?')) return true;
-            const response = await axios.delete('/admin/api/product/image/'+image_id);
+            const response = await axios.delete('/admin/api/products/image/'+image_id);
 
             if(response.data.status === 'ok'){
 
@@ -118,7 +118,7 @@ export default {
             };
 
 
-            const response = await axios.put('/admin/api/product', JSON.stringify(payload),{
+            const response = await axios.put('/admin/api/products', JSON.stringify(payload),{
                 headers: {
                      'Content-Type': 'application/json'
                 }
@@ -144,7 +144,7 @@ export default {
 
             console.log(form);
 
-            const response = await axios.post('/admin/api/product', form);
+            const response = await axios.post('/admin/api/products', form);
 
             this.productTitle = ''
             this.productDescription = '';

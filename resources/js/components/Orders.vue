@@ -28,7 +28,7 @@ export default {
     },
     methods:{
       async getOrders(){
-          const response = await axios.get('/order');
+          const response = await axios.get('/orders');
           console.log(response.data);
           this.orders = response.data;
       },

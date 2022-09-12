@@ -14,9 +14,8 @@ use App\Models\Order;
  */
 
 Route::get('/test',function(){
-    $order = Order::create([
-        "first_name" => "Maxim",
-    ]);
+    $orders = Order::all()->toArray();
+    dd($orders);
 });
 
 Route::get('/', function () {
@@ -25,20 +24,25 @@ Route::get('/', function () {
 
 //for Cleent Area
 Route::get('/products', [App\Http\Controllers\ProductController::class, 'get'])->middleware('auth');
-Route::post('/order',[\App\Http\Controllers\OrderController::class,'save'])->middleware('auth');
-Route::get('/order',[\App\Http\Controllers\OrderController::class,'get'])->middleware('auth');
+Route::post('/orders',[\App\Http\Controllers\OrderController::class,'save'])->middleware('auth');
+Route::get('/orders',[\App\Http\Controllers\OrderController::class,'getUserOrders'])->middleware('auth');
 
 Route::group(['middleware' => 'admin_auth'], function () {
     Route::view('/admin', 'admin');
     Route::view('/admin/products', 'admin');
+    Route::view('/admin/orders', 'admin');
 
     Route::get('admin/api/users',[App\Http\Controllers\UserController::class,'getUsers']);
     Route::post('admin/api/users/create_user_point_transaction',[App\Http\Controllers\UserController::class,'makeUserPointTransaction']);
-    Route::post('admin/api/product', [App\Http\Controllers\ProductController::class, 'save']);
-    Route::put('admin/api/product', [App\Http\Controllers\ProductController::class, 'update']);
-    Route::delete('admin/api/product/{id}', [App\Http\Controllers\ProductController::class, 'delete']);
+
+    Route::post('admin/api/products', [App\Http\Controllers\ProductController::class, 'save']);
+    Route::put('admin/api/products', [App\Http\Controllers\ProductController::class, 'update']);
+    Route::delete('admin/api/products/{id}', [App\Http\Controllers\ProductController::class, 'delete']);
+
     Route::delete('admin/api/product/image/{id}', [App\Http\Controllers\ProductController::class, 'deleteImage']);
     Route::post('admin/api/product/image', [App\Http\Controllers\ProductController::class, 'saveImage']);
+
+    Route::post('admin/api/orders/list',[\App\Http\Controllers\OrderController::class,'list']);
 
 });
 
