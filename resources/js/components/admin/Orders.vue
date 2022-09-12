@@ -26,7 +26,7 @@
         </template>
     </b-table>
 
-    <b-modal size="lg" v-model="orderDetailShow" hide-footer id="order_info" title="заказ">
+    <b-modal scrollable size="lg" v-model="orderDetailShow" hide-footer id="order_info" title="заказ">
         <div class="my-4">
            <p>Заказ № {{ orderId }} На суммму {{ orderTotal }}</p>
             <p>Статус заказа:</p>
@@ -73,6 +73,8 @@ export default {
             orderTotal: 0,
             orderStatus: '',
             orderItems: [],
+
+            modalShow: false,
         }
     },
     methods: {
@@ -98,7 +100,7 @@ export default {
            this.orderDetailShow = false;
         },
         showOrder(item){
-            this.orderDetailShow = true;
+            this.orderDetailShow = !this.orderDetailShow;
             // document.getElementById('saveOrderBtn').setAttribute('visible','true');
             // console.log(this.orderDetailShow);
             this.orderId = item.id;
