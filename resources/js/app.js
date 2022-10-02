@@ -2,7 +2,7 @@ require('./bootstrap');
 
 import {createApp} from 'vue'
 import *  as VueRouter from 'vue-router'
-// import Vuex from 'vuex';
+
 import { createPinia } from 'pinia'
 import App from './components/App.vue'
 

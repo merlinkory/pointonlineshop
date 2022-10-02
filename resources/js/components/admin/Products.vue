@@ -172,7 +172,7 @@ export default {
    margin-bottom: 20px;
    padding: 10px;
    background: #7ba4e5;
-   width:250px;
+   width:350px;
       float: left;
 }
 .form{

@@ -7,7 +7,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{csrf_token()}}">
 	<title>Laravel 9 Vue 3</title>
-	<link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
 </head>
 <body>
 
@@ -16,7 +15,7 @@
 
 </div>
 
-	
+
 
 	<script src="{{ asset('js/admin.js') }}"></script>
 </body>

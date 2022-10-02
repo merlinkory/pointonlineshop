@@ -1,5 +1,5 @@
 <template>
-    <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" />
+
     <b-table
         striped
         hover
@@ -25,6 +25,8 @@
             </b-link>
         </template>
     </b-table>
+
+    <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" />
 
     <b-modal scrollable size="lg" v-model="orderDetailShow" hide-footer id="order_info" title="заказ">
         <div class="my-4">

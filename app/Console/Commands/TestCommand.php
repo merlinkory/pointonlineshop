@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Log;
 use Illuminate\Console\Command;
 
 class TestCommand extends Command
@@ -27,6 +28,7 @@ class TestCommand extends Command
      */
     public function handle()
     {
-        //
+//        dd(Log::all());
+        \Log::debug('message');
     }
 }
